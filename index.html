@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lua to dylib Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 80%;
+            max-width: 600px;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            padding: 10px;
+            font-family: monospace;
+            resize: none;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        p {
+            font-size: 14px;
+            color: #777;
+        }
+        .status {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lua to .dylib Generator</h1>
+        <textarea id="luaCode" placeholder="Enter your Lua code here..."></textarea>
+        <br>
+        <button onclick="generateDylib()">Get .dylib</button>
+        <div class="status" id="status"></div>
+    </div>
+
+    <script>
+        async function generateDylib() {
+            const luaCode = document.getElementById('luaCode').value;
+            const statusElement = document.getElementById('status');
+
+            if (!luaCode) {
+                statusElement.textContent = "Please enter Lua code.";
+                statusElement.style.color = "red";
+                return;
+            }
+
+            try {
+                statusElement.textContent = "Generating .dylib...";
+                statusElement.style.color = "blue";
+
+                const response = await fetch('http://yourbackend.com/generate_dylib', { // Replace with your backend URL
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ lua_code: luaCode })
+                });
+
+                if (response.ok) {
+                    const data = await response.blob();
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(data);
+                    link.download = "generated.dylib";
+                    link.click();
+                    statusElement.textContent = "Download started!";
+                    statusElement.style.color = "green";
+                } else {
+                    statusElement.textContent = "Failed to generate .dylib.";
+                    statusElement.style.color = "red";
+                }
+            } catch (error) {
+                statusElement.textContent = "Error: " + error.message;
+                statusElement.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>
